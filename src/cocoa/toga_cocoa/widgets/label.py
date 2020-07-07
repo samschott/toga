@@ -1,19 +1,51 @@
 from travertino.size import at_least
 
 from toga_cocoa.colors import native_color
-from toga_cocoa.libs import NSTextAlignment, NSTextField
-
+from toga_cocoa.libs import (
+    NSTextAlignment, NSTextView, NSColor, NSString, NSMutableAttributedString,
+    NSColorSpace, NSUTF8StringEncoding, NSForegroundColorAttributeName
+)
+from rubicon.objc import at
 from .base import Widget
 
 
+def attributed_str_from_html(raw_html, font=None, color=None):
+    """Converts html to a NSAttributed string using the system font family and color."""
+
+    html_value = """
+    <span style="font-family: '{0}'; font-size: {1}; color: {2}">
+    {3}
+    </span>
+    """
+    font_family = font.fontName if font else 'system-ui'
+    font_size = font.pointSize if font else 13
+    color = color or NSColor.labelColor
+    c = color.colorUsingColorSpace(NSColorSpace.deviceRGBColorSpace)
+    c_str = f'rgb({c.redComponent * 255},{c.blueComponent * 255},{c.greenComponent * 255})'
+    html_value = html_value.format(font_family, font_size, c_str, raw_html)
+    nsstring = NSString(at(html_value))
+    data = nsstring.dataUsingEncoding(NSUTF8StringEncoding)
+    attr_str = NSMutableAttributedString.alloc().initWithHTML(
+        data,
+        documentAttributes=None,
+    )
+    return attr_str
+
+
 class Label(Widget):
+
     def create(self):
-        self.native = NSTextField.alloc().init()
+        self._color = None
+
+        self.native = NSTextView.alloc().init()
         self.native.impl = self
         self.native.interface = self.interface
 
         self.native.drawsBackground = False
         self.native.editable = False
+        self.native.selectable = True
+        self.native.textContainer.lineFragmentPadding = 0
+
         self.native.bezeled = False
 
         # Add the layout constraints
@@ -23,21 +55,48 @@ class Label(Widget):
         self.native.alignment = NSTextAlignment(value)
 
     def set_color(self, value):
+
         if value:
-            self.native.textColor = native_color(value)
+            self._color = native_color(value)
+        else:
+            self._color = None
+
+        # refresh the string with new color attribute
+
+        if self.interface.text:
+            self.set_text(self.interface.text)
+        elif self.interface.html:
+            self.set_html(self.interface.html)
 
     def set_font(self, value):
+
         if value:
             self.native.font = value._impl.native
 
     def set_text(self, value):
-        self.native.stringValue = self.interface._text
+
+        if value:
+            color = self._color or NSColor.labelColor
+            attr = {str(NSForegroundColorAttributeName): color}
+            attr_str = NSMutableAttributedString.alloc().initWithString(
+                at(value),
+                attributes=attr
+            )
+            self.native.textStorage.setAttributedString(attr_str)
+
+    def set_html(self, value):
+
+        if value:
+            attr_str = attributed_str_from_html(value, self.native.font, self._color)
+            self.native.textStorage.setAttributedString(attr_str)
+
+        self.rehint()
 
     def rehint(self):
-        # Width & height of a label is known and fixed.
-        content_size = self.native.intrinsicContentSize()
-        # print("REHINT label", self, content_size.width, content_size.height)
-        # 2020-05-11 The +1 is a hack; the label "X Translate:" gets truncated
-        # without the extra pixel.
-        self.interface.intrinsic.width = at_least(content_size.width + 1)
-        self.interface.intrinsic.height = content_size.height
+        # force layout
+        self.native.layoutManager.glyphRangeForTextContainer(self.native.textContainer)
+        # get layout rect
+        rect = self.native.layoutManager.usedRectForTextContainer(self.native.textContainer)
+
+        self.interface.intrinsic.width = at_least(rect.size.width)
+        self.interface.intrinsic.height = rect.size.height

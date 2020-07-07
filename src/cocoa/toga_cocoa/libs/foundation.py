@@ -41,3 +41,29 @@ NSURLRequest = ObjCClass('NSURLRequest')
 ######################################################################
 # NSValue.h
 NSNumber = ObjCClass('NSNumber')
+
+######################################################################
+# NSMutableAttributedString.h
+NSMutableAttributedString = ObjCClass('NSMutableAttributedString')
+
+
+######################################################################
+# NSString.h
+
+NSASCIIStringEncoding = 1
+NSNEXTSTEPStringEncoding = 2
+NSJapaneseEUCStringEncoding = 3
+NSUTF8StringEncoding = 4
+NSISOLatin1StringEncoding = 5
+NSSymbolStringEncoding = 6
+NSNonLossyASCIIStringEncoding = 7
+NSISOLatin2StringEncoding = 9
+NSUTF16StringEncoding = 10
+NSUnicodeStringEncoding = 10
+NSWindowsCP1251StringEncoding = 11
+NSWindowsCP1252StringEncoding = 12
+NSWindowsCP1253StringEncoding = 13
+NSWindowsCP1254StringEncoding = 14
+NSWindowsCP1250StringEncoding = 15
+NSISO2022JPStringEncoding = 21
+NSMacOSRomanStringEncoding = 30

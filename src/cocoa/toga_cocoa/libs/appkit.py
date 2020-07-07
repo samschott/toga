@@ -251,6 +251,11 @@ def NSColorUsingColorName(background_color):
 
 
 ######################################################################
+# NSColorSpace.h
+
+NSColorSpace = ObjCClass('NSColorSpace')
+
+######################################################################
 # NSCursor.h
 
 NSCursor = ObjCClass('NSCursor')
