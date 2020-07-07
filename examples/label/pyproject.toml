@@ -1,0 +1,44 @@
+[build-system]
+requires = ["briefcase"]
+
+[tool.briefcase]
+project_name = "Label Demo"
+bundle = "org.beeware"
+version = "0.3.0.dev21"
+url = "https://beeware.org"
+license = "BSD license"
+author = 'Tiberius Yak'
+author_email = "tiberius@beeware.org"
+
+[tool.briefcase.app.label]
+formal_name = "Label Demo"
+description = "A testing app"
+sources = ['label']
+requires = []
+
+
+[tool.briefcase.app.label.macOS]
+requires = [
+    'toga-cocoa',
+]
+
+[tool.briefcase.app.label.linux]
+requires = [
+    'toga-gtk',
+]
+
+[tool.briefcase.app.label.windows]
+requires = [
+    'toga-winforms',
+]
+
+# Mobile deployments
+[tool.briefcase.app.label.iOS]
+requires = [
+    'toga-iOS',
+]
+
+[tool.briefcase.app.label.android]
+requires = [
+    'toga-android',
+]
