@@ -3,8 +3,9 @@ from travertino.size import at_least
 from toga_cocoa.colors import native_color
 from toga_cocoa.libs import (
     NSTextAlignment, NSTextView, NSColor, NSString, NSMutableAttributedString,
-    NSColorSpace, NSUTF8StringEncoding, NSForegroundColorAttributeName
+    NSColorSpace, NSUTF8StringEncoding
 )
+
 from rubicon.objc import at
 from .base import Widget
 
@@ -61,28 +62,13 @@ class Label(Widget):
         else:
             self._color = None
 
-        # refresh the string with new color attribute
-
-        if self.interface.text:
-            self.set_text(self.interface.text)
-        elif self.interface.html:
-            self.set_html(self.interface.html)
+        # refresh the html with new color attribute
+        self.set_html(self.interface.html)
 
     def set_font(self, value):
 
         if value:
             self.native.font = value._impl.native
-
-    def set_text(self, value):
-
-        if value:
-            color = self._color or NSColor.labelColor
-            attr = {str(NSForegroundColorAttributeName): color}
-            attr_str = NSMutableAttributedString.alloc().initWithString(
-                at(value),
-                attributes=attr
-            )
-            self.native.textStorage.setAttributedString(attr_str)
 
     def set_html(self, value):
 
