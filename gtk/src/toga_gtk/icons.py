@@ -10,9 +10,12 @@ class Icon:
     EXTENSIONS = [".png", ".ico", ".icns"]
     SIZES = [512, 256, 128, 72, 64, 32, 16]
 
-    def __init__(self, interface, path):
+    def __init__(self, interface, path, mask):
         self.interface = interface
         self._native = {}
+
+        if mask:
+            raise NotImplementedError("Masked icons are not currently supported on Gtk")
 
         if path is None:
             # Use the executable location to find the share folder; look for icons

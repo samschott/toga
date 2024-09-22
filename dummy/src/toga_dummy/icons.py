@@ -6,7 +6,7 @@ class Icon(LoggedObject):
     EXTENSIONS = [".png", ".ico"]
     SIZES = None
 
-    def __init__(self, interface, path):
+    def __init__(self, interface, path, mask):
         super().__init__()
         self.interface = interface
         if self.ICON_FAILURE:

@@ -81,6 +81,7 @@ class Icon:
         self,
         path: str | Path,
         *,
+        mask: bool = False,
         system: bool = False,  # Deliberately undocumented; for internal use only
     ):
         """Create a new icon.
@@ -92,8 +93,11 @@ class Icon:
             icon will be :attr:`~toga.Icon.DEFAULT_ICON`. If an icon file is found, but
             it cannot be loaded (due to a file format or permission error), an exception
             will be raised.
+        :param mask: Whether the icon should be interpreted as a mask and adapts to
+            system theming.
         :param system: **For internal use only**
         """
+        self.mask = mask
         self.factory = get_platform_factory()
         try:
             # Try to load the icon with the given path snippet. If the request is for the
@@ -129,7 +133,7 @@ class Icon:
                     resource_path=resource_path,
                 )
 
-            self._impl = self.factory.Icon(interface=self, path=full_path)
+            self._impl = self.factory.Icon(interface=self, path=full_path, mask=mask)
         except FileNotFoundError:
             # Icon path couldn't be found. If the path is the sentinel for the app
             # icon, and this isn't running as a script, fall back to the application
@@ -138,7 +142,7 @@ class Icon:
                 if toga.App.app.is_bundled:
                     try:
                         # Use the application binary's icon
-                        self._impl = self.factory.Icon(interface=self, path=None)
+                        self._impl = self.factory.Icon(interface=self, path=None, mask=mask)
                     except FileNotFoundError:
                         # Can't find the application binary's icon.
                         print(
@@ -183,4 +187,4 @@ class Icon:
         raise FileNotFoundError(f"Can't find icon {self.path}")
 
     def __eq__(self, other: object) -> bool:
-        return isinstance(other, Icon) and other._impl.path == self._impl.path
+        return isinstance(other, Icon) and other._impl.path == self._impl.path and other.mask == self.mask

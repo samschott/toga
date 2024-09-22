@@ -9,7 +9,7 @@ class Icon:
     EXTENSIONS = [".icns", ".png", ".pdf"]
     SIZES = None
 
-    def __init__(self, interface, path):
+    def __init__(self, interface, path, mask):
         self.interface = interface
         self.interface._impl = self
 
@@ -52,6 +52,7 @@ class Icon:
             self.native = image.initWithContentsOfFile(str(path))
             if self.native is None:
                 raise ValueError(f"Unable to load icon from {path}")
+            self.native.template = mask
         finally:
             # Calling `release` here disabled Rubicon's "release on delete" automation.
             # We therefore add an explicit `release` call in __del__ if the NSImage was

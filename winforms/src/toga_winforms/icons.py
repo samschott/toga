@@ -8,9 +8,12 @@ class Icon:
     EXTENSIONS = [".ico", ".png", ".bmp"]
     SIZES = None
 
-    def __init__(self, interface, path):
+    def __init__(self, interface, path, mask):
         self.interface = interface
         self.path = path
+
+        if mask:
+            raise NotImplementedError("Masked icons are not currently supported on Windows")
 
         try:
             if path is None:

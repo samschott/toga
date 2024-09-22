@@ -291,6 +291,12 @@ UIGraphicsImageRendererContext = ObjCClass("UIGraphicsImageRendererContext")
 # UIImage.h
 UIImage = ObjCClass("UIImage")
 
+
+class UIImageRenderingMode(Enum):
+    Automatic = 0
+    AlwaysOriginal = 1
+    AlwaysTemplate = 2
+
 ######################################################################
 # UIImagePicker.h
 

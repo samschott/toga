@@ -1,9 +1,11 @@
+from rich.markup import render
 from rubicon.objc import Block, NSMakeRect, NSSize, objc_id
 
 from toga_iOS.libs import (
     UIGraphicsImageRenderer,
     UIGraphicsImageRendererContext,
     UIImage,
+    UIImageRenderingMode,
 )
 
 
@@ -11,7 +13,7 @@ class Icon:
     EXTENSIONS = [".icns", ".png", ".bmp", ".ico"]
     SIZES = None
 
-    def __init__(self, interface, path):
+    def __init__(self, interface, path, mask):
         self.interface = interface
 
         if path is None:
@@ -22,6 +24,13 @@ class Icon:
         self.native = UIImage.imageWithContentsOfFile(str(path))
         if self.native is None:
             raise ValueError(f"Unable to load icon from {path}")
+
+        if mask:
+            rendering_mode = UIImageRenderingMode.AlwaysTemplate
+        else:
+            rendering_mode = UIImageRenderingMode.AlwaysOriginal
+
+        self.native.renderingMode = rendering_mode
 
         # Multiple icon interface instances can end up referencing the same native
         # instance, so make sure we retain a reference count at the impl level.

@@ -14,6 +14,8 @@ from .libs import NSMenu, NSMenuItem, NSSquareStatusItemLength, NSStatusBar
 
 
 class StatusIcon:
+    MARGIN = 2
+
     def __init__(self, interface):
         self.interface = interface
         self.native = None
@@ -22,9 +24,9 @@ class StatusIcon:
         if self.native:
             native_icon = icon._impl.native if icon else toga.App.app.icon._impl.native
 
-            # macOS status icons need to be 22px square, or they render weird
             status_icon = native_icon.copy()
-            status_icon.setSize(NSSize(22, 22))
+            size = NSStatusBar.systemStatusBar.thickness - 2 * StatusIcon.MARGIN
+            status_icon.setSize(NSSize(size, size))
             self.native.button.image = status_icon
 
     def create(self):
